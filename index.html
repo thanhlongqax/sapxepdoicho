@@ -3,7 +3,7 @@
  <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>CS Quiz Game</title>
+  <title>Ôn tập thuật toán sắp xếp</title>
   <script src="https://cdn.tailwindcss.com/3.4.17"></script>
   <script src="https://cdn.jsdelivr.net/npm/lucide@0.263.0/dist/umd/lucide.min.js"></script>
   <script src="/_sdk/element_sdk.js"></script>
@@ -34,7 +34,7 @@
      <div class="w-24 h-24 mx-auto bg-gradient-to-br from-indigo-400 to-purple-500 rounded-3xl flex items-center justify-center mb-6 shadow-lg bounce-in">
       <i data-lucide="brain" class="w-14 h-14 text-white"></i>
      </div>
-     <h1 id="title-text" class="text-4xl font-800 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">Quiz Cấu trúc dữ liệu &amp; Giải thuật</h1>
+     <h1 id="title-text" class="text-4xl font-800 bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent mb-2">Quiz Cấu trúc dữ liệu &amp; Giải thuật sắp xếp</h1>
      <p id="subtitle-text" class="text-lg text-gray-600">Ôn tập kiến thức lập trình C cho sinh viên cao đẳng</p>
     </div>
     <div class="grid grid-cols-2 gap-4 mb-8 text-left">
@@ -135,327 +135,417 @@
     </div>
    </div>
   </div>
-  <script>
-const questions = [
-{q:"Trong Insertion Sort, phần đã sắp xếp nằm ở:", opts:["Bên trái mảng","Bên phải mảng","Chính giữa mảng","Ngẫu nhiên"], ans:0},
+<!-- CHỈ THAY PHẦN SCRIPT CŨ BẰNG SCRIPT NÀY -->
 
-{q:"Thuật toán nào dễ hiểu và phù hợp cho người mới học?", opts:["Selection Sort","Insertion Sort","Cả hai đều đúng","Không thuật toán nào"], ans:2},
-
-{q:"Trong Selection Sort, biến min thường dùng để:", opts:["Lưu vị trí nhỏ nhất","Lưu số lần lặp","Lưu kích thước mảng","Lưu tổng mảng"], ans:0},
-
-{q:"Trong Insertion Sort, nếu mảng đã tăng dần sẵn thì:", opts:["Chạy nhanh hơn","Chạy chậm hơn","Không chạy được","Bị lỗi"], ans:0},
-
-{q:"Trong Selection Sort, vòng lặp trong dùng để:", opts:["Tìm phần tử nhỏ nhất","In dữ liệu","Xóa phần tử","Đảo mảng"], ans:0},
-
-{q:"Trong C, phép đổi chỗ hai phần tử thường gồm:", opts:["1 biến","2 biến","3 bước với biến tạm","4 vòng lặp"], ans:2},
-
-{q:"Thuật toán nào dịch chuyển phần tử thay vì đổi chỗ liên tục?", opts:["Insertion Sort","Selection Sort","Bubble Sort","Quick Sort"], ans:0},
-
-{q:"Khi chèn phần tử trong Insertion Sort, thao tác cuối cùng là:", opts:["Xóa key","Gán key vào đúng vị trí","Đảo mảng","Dừng chương trình"], ans:1},
-
-{q:"Trong Selection Sort, sau vòng lặp đầu tiên:", opts:["Phần tử lớn nhất ở đầu","Phần tử nhỏ nhất ở đầu","Mảng đảo ngược","Mảng bị xóa"], ans:1},
-
-{q:"Thuật toán nào phù hợp với mảng nhỏ?", opts:["Selection Sort","Insertion Sort","Cả hai đều phù hợp","Merge Sort"], ans:2},
-
-{q:"Trong Insertion Sort, nếu a[i] > key thì:", opts:["Đổi chỗ ngay","Dời a[i] sang phải","Xóa a[i]","Dừng vòng lặp"], ans:1},
-
-{q:"Selection Sort có bao nhiêu vòng lặp chính?", opts:["1","2","3","4"], ans:1},
-
-{q:"Insertion Sort bắt đầu xét từ phần tử thứ mấy?", opts:["Phần tử đầu tiên","Phần tử thứ hai","Phần tử cuối","Phần tử giữa"], ans:1},
-
-{q:"Thuật toán nào thường được mô phỏng bằng xếp bài?", opts:["Selection Sort","Insertion Sort","Quick Sort","Heap Sort"], ans:1},
-
-{q:"Trong Selection Sort, nếu tìm được phần tử nhỏ hơn:", opts:["Cập nhật vị trí nhỏ nhất","Dừng chương trình","Xóa phần tử","Đổi màu màn hình"], ans:0},
-
-{q:"Trong Insertion Sort, vòng lặp dừng khi:", opts:["Hết mảng","a[i] <= key hoặc i < 0","key bằng 0","Mảng rỗng"], ans:1},
-
-{q:"Thuật toán nào ổn định hơn với dữ liệu gần đúng thứ tự?", opts:["Insertion Sort","Selection Sort","Heap Sort","Quick Sort"], ans:0},
-
-{q:"Kết quả sắp xếp tăng dần của 9 4 7 1 là:", opts:["1 4 7 9","9 7 4 1","4 1 7 9","7 9 4 1"], ans:0},
-
-{q:"Thuật toán nào có ý tưởng chọn đúng vị trí trước?", opts:["Insertion Sort","Selection Sort","Merge Sort","Quick Sort"], ans:1}
-];
-
-let currentQ=0, score=0, correct=0, wrong=0, timer=null, timeLeft=20, shuffled=[], feedbackElement=null, isPaused=false;
-
-// Audio context for sound effects
-const audioContext = new (window.AudioContext || window.webkitAudioContext)();
-
-function playSound(freq, dur, type='sine') {
-  try {
-    const osc = audioContext.createOscillator();
-    const gain = audioContext.createGain();
-    osc.connect(gain);
-    gain.connect(audioContext.destination);
-    osc.frequency.value = freq;
-    osc.type = type;
-    gain.gain.setValueAtTime(0.3, audioContext.currentTime);
-    gain.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + dur);
-    osc.start(audioContext.currentTime);
-    osc.stop(audioContext.currentTime + dur);
-  } catch(e) { console.error('Audio failed:', e); }
-}
-
-function playCorrectSound() { playSound(800, 0.2); playSound(1000, 0.2, 'sine'); }
-function playWrongSound() { playSound(300, 0.15); playSound(250, 0.15); }
-
-function createConfetti() {
-  for (let i = 0; i < 20; i++) {
-    const conf = document.createElement('div');
-    conf.className = 'confetti';
-    conf.innerHTML = ['🎉', '✨', '🌟', '⭐', '🎊'][Math.floor(Math.random() * 5)];
-    conf.style.cssText = `left:${Math.random()*100}%;top:-10px;font-size:24px;animation:fall ${1+Math.random()}s linear forwards;z-index:999;`;
-    document.body.appendChild(conf);
-    setTimeout(() => conf.remove(), 1500);
-  }
-}
-
-function showInstructions() {
-  document.getElementById('instructions-modal').classList.remove('hidden');
-}
-
-function closeInstructions() {
-  document.getElementById('instructions-modal').classList.add('hidden');
-}
-
-function shuffle(arr){
-  let a=[...arr];
-  for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
-  return a;
-}
-
-function startGame(){
-  currentQ=0; score=0; correct=0; wrong=0; isPaused=false;
-  shuffled=shuffle(questions);
-  document.getElementById('start-screen').classList.add('hidden');
-  document.getElementById('result-screen').classList.add('hidden');
-  document.getElementById('quiz-screen').classList.remove('hidden');
-  showQuestion();
-}
-
-function showQuestion(){
-  clearInterval(timer); timeLeft=20;
-  const q=shuffled[currentQ];
-  document.getElementById('q-counter').textContent=`${currentQ+1}/20`;
-  document.getElementById('score-badge').querySelector('span').textContent=`${score}`;
-  document.getElementById('progress-bar').style.width=`${((currentQ)/shuffled.length)*100}%`;
-  document.getElementById('timer-text').textContent=timeLeft;
-  document.getElementById('timer-badge').classList.remove('bg-red-50','text-red-600','animate-pulse');
-  document.getElementById('timer-badge').classList.add('bg-orange-50','text-orange-600');
-  document.getElementById('q-text').textContent=q.q;
+<script>
+  const questions = [
+  {q:"Trong Insertion Sort, phần đã sắp xếp nằm ở:", opts:["Bên trái mảng","Bên phải mảng","Chính giữa mảng","Ngẫu nhiên"], ans:0},
+  {q:"Thuật toán nào dễ hiểu và phù hợp cho người mới học?", opts:["Selection Sort","Insertion Sort","Cả hai đều đúng","Không thuật toán nào"], ans:2},
+  {q:"Trong Selection Sort, biến min thường dùng để:", opts:["Lưu vị trí nhỏ nhất","Lưu số lần lặp","Lưu kích thước mảng","Lưu tổng mảng"], ans:0},
+  {q:"Trong Insertion Sort, nếu mảng đã tăng dần sẵn thì:", opts:["Chạy nhanh hơn","Chạy chậm hơn","Không chạy được","Bị lỗi"], ans:0},
+  {q:"Trong Selection Sort, vòng lặp trong dùng để:", opts:["Tìm phần tử nhỏ nhất","In dữ liệu","Xóa phần tử","Đảo mảng"], ans:0},
+  {q:"Trong C, phép đổi chỗ hai phần tử thường gồm:", opts:["1 biến","2 biến","3 bước với biến tạm","4 vòng lặp"], ans:2},
+  {q:"Thuật toán nào dịch chuyển phần tử thay vì đổi chỗ liên tục?", opts:["Insertion Sort","Selection Sort","Bubble Sort","Quick Sort"], ans:0},
+  {q:"Khi chèn phần tử trong Insertion Sort, thao tác cuối cùng là:", opts:["Xóa key","Gán key vào đúng vị trí","Đảo mảng","Dừng chương trình"], ans:1},
+  {q:"Trong Selection Sort, sau vòng lặp đầu tiên:", opts:["Phần tử lớn nhất ở đầu","Phần tử nhỏ nhất ở đầu","Mảng đảo ngược","Mảng bị xóa"], ans:1},
+  {q:"Thuật toán nào phù hợp với mảng nhỏ?", opts:["Selection Sort","Insertion Sort","Cả hai đều phù hợp","Merge Sort"], ans:2},
+  {q:"Trong Insertion Sort, nếu a[i] > key thì:", opts:["Đổi chỗ ngay","Dời a[i] sang phải","Xóa a[i]","Dừng vòng lặp"], ans:1},
+  {q:"Selection Sort có bao nhiêu vòng lặp chính?", opts:["1","2","3","4"], ans:1},
+  {q:"Insertion Sort bắt đầu xét từ phần tử thứ mấy?", opts:["Phần tử đầu tiên","Phần tử thứ hai","Phần tử cuối","Phần tử giữa"], ans:1},
+  {q:"Thuật toán nào thường được mô phỏng bằng xếp bài?", opts:["Selection Sort","Insertion Sort","Quick Sort","Heap Sort"], ans:1},
+  {q:"Trong Selection Sort, nếu tìm được phần tử nhỏ hơn:", opts:["Cập nhật vị trí nhỏ nhất","Dừng chương trình","Xóa phần tử","Đổi màu màn hình"], ans:0},
+  {q:"Trong Insertion Sort, vòng lặp dừng khi:", opts:["Hết mảng","a[i] <= key hoặc i < 0","key bằng 0","Mảng rỗng"], ans:1},
+  {q:"Thuật toán nào ổn định hơn với dữ liệu gần đúng thứ tự?", opts:["Insertion Sort","Selection Sort","Heap Sort","Quick Sort"], ans:0},
+  {q:"Kết quả sắp xếp tăng dần của 9 4 7 1 là:", opts:["1 4 7 9","9 7 4 1","4 1 7 9","7 9 4 1"], ans:0},
+  {q:"Thuật toán nào có ý tưởng chọn đúng vị trí trước?", opts:["Insertion Sort","Selection Sort","Merge Sort","Quick Sort"], ans:1}
+  ];
   
-  // Shuffle options but track correct answer
-  const indices=[0,1,2,3];
-  for(let i=3;i>0;i--){let j=Math.floor(Math.random()*(i+1));[indices[i],indices[j]]=[indices[j],indices[i]];}
-  const correctIdx=indices.indexOf(q.ans);
+  let currentQ = 0;
+  let score = 0;
+  let correct = 0;
+  let wrong = 0;
+  let timer = null;
+  let timeLeft = 20;
+  let shuffled = [];
+  let feedbackElement = null;
+  let isPaused = false;
   
-  const optDiv=document.getElementById('options');
-  optDiv.innerHTML='';
-  indices.forEach((oi,i)=>{
-    const btn=document.createElement('button');
-    btn.className='w-full text-left p-4 rounded-xl border-2 border-gray-300 hover:border-indigo-400 hover:bg-indigo-50 transition-all font-600 text-gray-800 active:scale-[0.98] bg-white';
-    btn.textContent=q.opts[oi];
-    btn.onclick=()=>selectAnswer(i,correctIdx);
-    optDiv.appendChild(btn);
-  });
-
-  document.getElementById('question-card').classList.remove('card-enter');
-  void document.getElementById('question-card').offsetWidth;
-  document.getElementById('question-card').classList.add('card-enter');
-
-  timer=setInterval(()=>{
-    timeLeft--;
-    document.getElementById('timer-text').textContent=timeLeft;
-    if(timeLeft<=5){
-      document.getElementById('timer-badge').classList.remove('bg-orange-50','text-orange-600');
-      document.getElementById('timer-badge').classList.add('bg-red-50','text-red-600','animate-pulse');
+  const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  
+  function playSound(freq, dur, type='sine') {
+    try {
+      const osc = audioContext.createOscillator();
+      const gain = audioContext.createGain();
+  
+      osc.connect(gain);
+      gain.connect(audioContext.destination);
+  
+      osc.frequency.value = freq;
+      osc.type = type;
+  
+      gain.gain.setValueAtTime(0.3, audioContext.currentTime);
+      gain.gain.exponentialRampToValueAtTime(
+        0.01,
+        audioContext.currentTime + dur
+      );
+  
+      osc.start(audioContext.currentTime);
+      osc.stop(audioContext.currentTime + dur);
+  
+    } catch(e) {
+      console.log(e);
     }
-    if(timeLeft<=0){clearInterval(timer);timeUp();}
-  },1000);
-}
-
-function selectAnswer(selected, correctIdx){
-  clearInterval(timer);
-  const btns=document.getElementById('options').children;
-  for(let b of btns) b.onclick=null;
-  
-  if(selected===correctIdx){
-    btns[selected].classList.add('border-green-500','bg-green-100','text-green-700','pulse-correct','font-700');
-    btns[selected].innerHTML = '✓ ' + btns[selected].textContent;
-    const bonus = timeLeft > 10 ? 5 : 0;
-    score+=10+bonus;
-    correct++;
-    playCorrectSound();
-    createConfetti();
-    showFeedback('Đúng rồi! 🎉', 'green');
-  } else {
-    btns[selected].classList.add('border-red-400','bg-red-100','text-red-700','shake-wrong');
-    btns[selected].innerHTML = '✗ ' + btns[selected].textContent;
-    btns[correctIdx].classList.add('border-green-500','bg-green-100','text-green-700','font-700');
-    btns[correctIdx].innerHTML = '✓ ' + btns[correctIdx].textContent;
-    wrong++;
-    playWrongSound();
-    showFeedback('Chưa đúng! Xem lại nhé 📚', 'red');
   }
-  setTimeout(nextQuestion,1500);
-}
-
-function showFeedback(msg, color) {
-  if(feedbackElement) feedbackElement.remove();
-  const fb = document.createElement('div');
-  const colors = {
-    'green': 'bg-green-100 text-green-700 border-green-300',
-    'red': 'bg-red-100 text-red-700 border-red-300'
-  };
-  fb.className = `fixed top-6 left-1/2 -translate-x-1/2 ${colors[color]} border-2 px-6 py-3 rounded-full font-700 z-50 correct-feedback`;
-  fb.textContent = msg;
-  document.body.appendChild(fb);
-  feedbackElement = fb;
-  setTimeout(() => fb.remove(), 1200);
-}
-
-function timeUp(){
-  const btns=document.getElementById('options').children;
-  for(let b of btns) b.onclick=null;
-  wrong++;
-  showFeedback('Hết giờ! ⏰', 'red');
-  playWrongSound();
-  setTimeout(nextQuestion,800);
-}
-
-function togglePause(){
-  isPaused=!isPaused;
-  const pauseBtn=document.getElementById('pause-btn');
-  const timerBadge=document.getElementById('timer-badge');
-  const optionsDiv=document.getElementById('options');
   
-  if(isPaused){
+  function playCorrectSound(){
+    playSound(800,0.2);
+    playSound(1000,0.2);
+  }
+  
+  function playWrongSound(){
+    playSound(300,0.15);
+  }
+  
+  function shuffle(arr){
+    let a=[...arr];
+  
+    for(let i=a.length-1;i>0;i--){
+      let j=Math.floor(Math.random()*(i+1));
+      [a[i],a[j]]=[a[j],a[i]];
+    }
+  
+    return a;
+  }
+  
+  function showInstructions(){
+    document.getElementById('instructions-modal')
+    .classList.remove('hidden');
+  }
+  
+  function closeInstructions(){
+    document.getElementById('instructions-modal')
+    .classList.add('hidden');
+  }
+  
+  function createConfetti(){
+  
+    for(let i=0;i<20;i++){
+  
+      const conf=document.createElement('div');
+  
+      conf.className='confetti';
+  
+      conf.innerHTML=['🎉','✨','🌟','⭐','🎊']
+      [Math.floor(Math.random()*5)];
+  
+      conf.style.cssText=`
+        left:${Math.random()*100}%;
+        top:-10px;
+        font-size:24px;
+        animation:fall ${1+Math.random()}s linear forwards;
+        z-index:999;
+      `;
+  
+      document.body.appendChild(conf);
+  
+      setTimeout(()=>{
+        conf.remove();
+      },1500);
+    }
+  }
+  
+  function startGame(){
+  
+    currentQ = 0;
+    score = 0;
+    correct = 0;
+    wrong = 0;
+    isPaused = false;
+  
+    shuffled = shuffle(questions);
+  
+    document.getElementById('start-screen')
+    .classList.add('hidden');
+  
+    document.getElementById('result-screen')
+    .classList.add('hidden');
+  
+    document.getElementById('quiz-screen')
+    .classList.remove('hidden');
+  
+    showQuestion();
+  }
+  
+  function startTimer(){
+  
     clearInterval(timer);
-    pauseBtn.innerHTML='<i data-lucide="play" class="w-3.5 h-3.5"></i> <span class="hidden sm:inline">Tiếp tục</span>';
-    pauseBtn.classList.add('bg-green-50','hover:bg-green-100','text-green-600','border-green-200');
-    pauseBtn.classList.remove('bg-blue-50','hover:bg-blue-100','text-blue-600','border-blue-200');
-    timerBadge.classList.add('opacity-50');
-    optionsDiv.classList.add('opacity-50','pointer-events-none');
-    lucide.createIcons();
-  } else {
-    pauseBtn.innerHTML='<i data-lucide="pause" class="w-3.5 h-3.5"></i> <span class="hidden sm:inline">Dừng</span>';
-    pauseBtn.classList.remove('bg-green-50','hover:bg-green-100','text-green-600','border-green-200');
-    pauseBtn.classList.add('bg-blue-50','hover:bg-blue-100','text-blue-600','border-blue-200');
-    timerBadge.classList.remove('opacity-50');
-    optionsDiv.classList.remove('opacity-50','pointer-events-none');
-    
-    timer=setInterval(()=>{
+  
+    timer = setInterval(()=>{
+  
+      if(isPaused) return;
+  
       timeLeft--;
-      document.getElementById('timer-text').textContent=timeLeft;
-      if(timeLeft<=5){
-        document.getElementById('timer-badge').classList.remove('bg-orange-50','text-orange-600');
-        document.getElementById('timer-badge').classList.add('bg-red-50','text-red-600','animate-pulse');
+  
+      document.getElementById('timer-text')
+      .textContent = timeLeft;
+  
+      if(timeLeft <= 5){
+  
+        document.getElementById('timer-badge')
+        .classList.remove(
+          'bg-orange-50',
+          'text-orange-600'
+        );
+  
+        document.getElementById('timer-badge')
+        .classList.add(
+          'bg-red-50',
+          'text-red-600',
+          'animate-pulse'
+        );
       }
-      if(timeLeft<=0){clearInterval(timer);timeUp();}
+  
+      if(timeLeft <= 0){
+  
+        clearInterval(timer);
+  
+        timeUp();
+      }
+  
     },1000);
+  }
+  
+  function showQuestion(){
+  
+    clearInterval(timer);
+  
+    timeLeft = 20;
+  
+    const q = shuffled[currentQ];
+  
+    document.getElementById('q-counter')
+    .textContent = `${currentQ+1}/${shuffled.length}`;
+  
+    document.getElementById('score-badge')
+    .innerHTML = `${score} <span class="text-sm">pts</span>`;
+  
+    document.getElementById('progress-bar')
+    .style.width = `${(currentQ/shuffled.length)*100}%`;
+  
+    document.getElementById('timer-text')
+    .textContent = timeLeft;
+  
+    document.getElementById('q-text')
+    .textContent = q.q;
+  
+    const indices=[0,1,2,3];
+  
+    for(let i=3;i>0;i--){
+      let j=Math.floor(Math.random()*(i+1));
+      [indices[i],indices[j]]=[indices[j],indices[i]];
+    }
+  
+    const correctIdx = indices.indexOf(q.ans);
+  
+    const optDiv=document.getElementById('options');
+  
+    optDiv.innerHTML='';
+  
+    indices.forEach((oi,i)=>{
+  
+      const btn=document.createElement('button');
+  
+      btn.className='w-full text-left p-4 rounded-xl border-2 border-gray-300 hover:border-indigo-400 hover:bg-indigo-50 transition-all font-600 text-gray-800 bg-white';
+  
+      btn.textContent=q.opts[oi];
+  
+      btn.onclick=()=>selectAnswer(i,correctIdx);
+  
+      optDiv.appendChild(btn);
+    });
+  
+    startTimer();
+  }
+  
+  function selectAnswer(selected, correctIdx){
+  
+    clearInterval(timer);
+  
+    const btns=document.getElementById('options').children;
+  
+    for(let b of btns){
+      b.onclick=null;
+    }
+  
+    if(selected===correctIdx){
+  
+      btns[selected].classList.add(
+        'border-green-500',
+        'bg-green-100',
+        'text-green-700'
+      );
+  
+      score += timeLeft > 10 ? 15 : 10;
+  
+      correct++;
+  
+      playCorrectSound();
+  
+      createConfetti();
+  
+      showFeedback('Đúng rồi 🎉','green');
+  
+    }else{
+  
+      btns[selected].classList.add(
+        'border-red-500',
+        'bg-red-100',
+        'text-red-700'
+      );
+  
+      btns[correctIdx].classList.add(
+        'border-green-500',
+        'bg-green-100',
+        'text-green-700'
+      );
+  
+      wrong++;
+  
+      playWrongSound();
+  
+      showFeedback('Sai rồi 📚','red');
+    }
+  
+    setTimeout(nextQuestion,1500);
+  }
+  
+  function showFeedback(msg,color){
+  
+    if(feedbackElement){
+      feedbackElement.remove();
+    }
+  
+    const fb=document.createElement('div');
+  
+    fb.className=`
+      fixed top-6 left-1/2
+      -translate-x-1/2
+      px-6 py-3
+      rounded-full
+      font-700
+      z-50
+      border-2
+    `;
+  
+    if(color==='green'){
+      fb.classList.add(
+        'bg-green-100',
+        'text-green-700',
+        'border-green-300'
+      );
+    }else{
+      fb.classList.add(
+        'bg-red-100',
+        'text-red-700',
+        'border-red-300'
+      );
+    }
+  
+    fb.textContent=msg;
+  
+    document.body.appendChild(fb);
+  
+    feedbackElement=fb;
+  
+    setTimeout(()=>{
+      fb.remove();
+    },1200);
+  }
+  
+  function timeUp(){
+  
+    wrong++;
+  
+    playWrongSound();
+  
+    showFeedback('Hết giờ ⏰','red');
+  
+    setTimeout(nextQuestion,1000);
+  }
+  
+  function togglePause(){
+  
+    isPaused = !isPaused;
+  
+    const pauseBtn = document.getElementById('pause-btn');
+  
+    if(isPaused){
+  
+      pauseBtn.innerHTML =
+      '<i data-lucide="play"></i> Tiếp tục';
+  
+    }else{
+  
+      pauseBtn.innerHTML =
+      '<i data-lucide="pause"></i> Dừng';
+    }
+  
     lucide.createIcons();
   }
-}
-
-function nextQuestion(){
-  currentQ++;
-  if(currentQ>=shuffled.length) showResult();
-  else showQuestion();
-}
-
-function showResult(){
-  document.getElementById('quiz-screen').classList.add('hidden');
-  document.getElementById('result-screen').classList.remove('hidden');
-  const pct=correct/shuffled.length;
-  const icon=document.getElementById('result-icon');
-  if(pct>=0.8){
-    icon.className='text-6xl';
-    icon.innerHTML='🏆';
-    document.getElementById('result-icon').parentElement.classList.add('bg-green-50');
-    document.getElementById('result-title').textContent='Xuất sắc!';
-    document.getElementById('result-subtitle').textContent='🎉 Bạn nắm vững kiến thức lập trình rồi!';
+  
+  function nextQuestion(){
+  
+    currentQ++;
+  
+    if(currentQ >= shuffled.length){
+  
+      showResult();
+  
+    }else{
+  
+      showQuestion();
+    }
   }
-  else if(pct>=0.5){
-    icon.className='text-6xl';
-    icon.innerHTML='👍';
-    document.getElementById('result-icon').parentElement.classList.add('bg-yellow-50');
-    document.getElementById('result-title').textContent='Khá tốt!';
-    document.getElementById('result-subtitle').textContent='💪 Cần ôn thêm một chút nữa nhé.';
+  
+  function showResult(){
+  
+    clearInterval(timer);
+  
+    document.getElementById('quiz-screen')
+    .classList.add('hidden');
+  
+    document.getElementById('result-screen')
+    .classList.remove('hidden');
+  
+    document.getElementById('final-score')
+    .textContent = score;
+  
+    document.getElementById('correct-count')
+    .textContent = correct;
+  
+    document.getElementById('wrong-count')
+    .textContent = wrong;
+  
+    const pct = correct / shuffled.length;
+  
+    if(pct >= 0.8){
+  
+      document.getElementById('result-title')
+      .textContent='Xuất sắc!';
+  
+    }else if(pct >= 0.5){
+  
+      document.getElementById('result-title')
+      .textContent='Khá tốt!';
+  
+    }else{
+  
+      document.getElementById('result-title')
+      .textContent='Cần cố gắng thêm!';
+    }
   }
-  else{
-    icon.className='text-6xl';
-    icon.innerHTML='📖';
-    document.getElementById('result-icon').parentElement.classList.add('bg-orange-50');
-    document.getElementById('result-title').textContent='Cần cố gắng thêm!';
-    document.getElementById('result-subtitle').textContent='💡 Hãy xem lại bài và thử lại nhé.';
-  }
-  document.getElementById('final-score').textContent=score;
-  document.getElementById('correct-count').textContent=correct;
-  document.getElementById('wrong-count').textContent=wrong;
-}
-
-// Element SDK
-const defaultConfig = {
-  game_title: "Quiz Cấu trúc dữ liệu & Giải thuật",
-  game_subtitle: "Ôn tập kiến thức lập trình C",
-  primary_color: "#4f46e5",
-  surface_color: "#f9fafb",
-  text_color: "#111827",
-  accent_color: "#ea580c",
-  secondary_color: "#6366f1",
-  font_family: "Be Vietnam Pro",
-  font_size: 16
-};
-
-window.elementSdk.init({
-  defaultConfig,
-  onConfigChange: async (config) => {
-    const title = config.game_title || defaultConfig.game_title;
-    document.getElementById('title-text').textContent = title;
-    const subtitle = config.game_subtitle || defaultConfig.game_subtitle;
-    document.getElementById('subtitle-text').textContent = subtitle;
-    const font = config.font_family || defaultConfig.font_family;
-    document.body.style.fontFamily = `${font}, sans-serif`;
-    const size = config.font_size || defaultConfig.font_size;
-    document.getElementById('q-text').style.fontSize = `${size*1.1}px`;
-  },
-  mapToCapabilities: (config) => ({
-    recolorables: [
-      {get:()=>config.primary_color||defaultConfig.primary_color, set:(v)=>{config.primary_color=v;window.elementSdk.setConfig({primary_color:v})}},
-      {get:()=>config.surface_color||defaultConfig.surface_color, set:(v)=>{config.surface_color=v;window.elementSdk.setConfig({surface_color:v})}},
-      {get:()=>config.text_color||defaultConfig.text_color, set:(v)=>{config.text_color=v;window.elementSdk.setConfig({text_color:v})}},
-    ],
-    borderables: [],
-    fontEditable: {get:()=>config.font_family||defaultConfig.font_family, set:(v)=>{config.font_family=v;window.elementSdk.setConfig({font_family:v})}},
-    fontSizeable: {get:()=>config.font_size||defaultConfig.font_size, set:(v)=>{config.font_size=v;window.elementSdk.setConfig({font_size:v})}}
-  }),
-  mapToEditPanelValues: (config) => new Map([
-    ["game_title", config.game_title || defaultConfig.game_title],
-    ["game_subtitle", config.game_subtitle || defaultConfig.game_subtitle]
-  ])
-});
-
-// Add keyframe animation for confetti and timer
-const style = document.createElement('style');
-style.textContent = `
-  @keyframes fall {
-    to { transform: translateY(100vh) rotate(360deg); opacity: 0; }
-  }
-  @keyframes fadeIn { 
-    from { opacity: 0; transform: scale(0.8); } 
-    to { opacity: 1; transform: scale(1); } 
-  }
-  .animate-pulse {
-    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-  }
-`;
-document.head.appendChild(style);
-
-lucide.createIcons();
-</script>
+  
+  lucide.createIcons();
+  </script>
  <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9fd8dc33f7ab1075',t:'MTc3OTA4NjMxOS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
